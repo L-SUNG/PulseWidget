@@ -1,0 +1,133 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style TargetType="ToolTip">
+    <Setter Property="Background" Value="{DynamicResource Pulse.Panel}"/><Setter Property="Foreground" Value="{DynamicResource Pulse.Text}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Pulse.Border}"/><Setter Property="Padding" Value="10"/>
+  </Style>
+  <Style TargetType="ContextMenu">
+    <Setter Property="Background" Value="{DynamicResource Pulse.Panel}"/><Setter Property="Foreground" Value="{DynamicResource Pulse.Text}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Pulse.Border}"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ContextMenu">
+      <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="5">
+        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+      </Border>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="MenuItem">
+    <Setter Property="Foreground" Value="{DynamicResource Pulse.Text}"/>
+    <Setter Property="Padding" Value="8,6"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="MenuItem">
+      <Border x:Name="Frame" CornerRadius="5" Background="Transparent" Padding="{TemplateBinding Padding}">
+        <Grid>
+          <Grid.ColumnDefinitions><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/></Grid.ColumnDefinitions>
+          <TextBlock x:Name="Check" Text="✓" Foreground="{DynamicResource Pulse.Accent}" Visibility="Collapsed" VerticalAlignment="Center"/>
+          <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+          <TextBlock x:Name="Arrow" Grid.Column="2" Text="›" Visibility="Collapsed" HorizontalAlignment="Right"/>
+          <Popup x:Name="PART_Popup" Grid.Column="2" Placement="Right" HorizontalOffset="3" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" AllowsTransparency="True" Focusable="False" PopupAnimation="None">
+            <Border Background="{DynamicResource Pulse.Panel}" BorderBrush="{DynamicResource Pulse.Border}" BorderThickness="1" CornerRadius="8" Padding="5">
+              <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+            </Border>
+          </Popup>
+        </Grid>
+      </Border>
+      <ControlTemplate.Triggers>
+        <Trigger Property="IsHighlighted" Value="True"><Setter TargetName="Frame" Property="Background" Value="{DynamicResource Pulse.Hover}"/></Trigger>
+        <Trigger Property="IsChecked" Value="True"><Setter TargetName="Check" Property="Visibility" Value="Visible"/></Trigger>
+        <Trigger Property="HasItems" Value="True"><Setter TargetName="Arrow" Property="Visibility" Value="Visible"/></Trigger>
+        <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5"/></Trigger>
+      </ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="Separator">
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Separator"><Border Height="1" Background="{DynamicResource Pulse.Border}" Margin="8,4"/></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Pulse.Button" TargetType="Button">
+    <Setter Property="Background" Value="{DynamicResource Pulse.Control}"/><Setter Property="Foreground" Value="{DynamicResource Pulse.Text}"/>
+    <Setter Property="Padding" Value="10,7"/><Setter Property="FontSize" Value="11"/><Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+      <Border x:Name="Frame" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource Pulse.ControlRadius}" Padding="{TemplateBinding Padding}" BorderThickness="1" BorderBrush="Transparent">
+        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+      </Border>
+      <ControlTemplate.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Frame" Property="Background" Value="{DynamicResource Pulse.Hover}"/></Trigger>
+        <Trigger Property="IsPressed" Value="True"><Setter TargetName="Frame" Property="Background" Value="{DynamicResource Pulse.Pressed}"/></Trigger>
+        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Frame" Property="BorderBrush" Value="{DynamicResource Pulse.Accent}"/></Trigger>
+      </ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Pulse.TextBox" TargetType="TextBox">
+    <Setter Property="Foreground" Value="{DynamicResource Pulse.Text}"/>
+    <Setter Property="Background" Value="{DynamicResource Pulse.Control}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Pulse.Border}"/>
+    <Setter Property="CaretBrush" Value="{DynamicResource Pulse.Text}"/>
+    <Setter Property="SelectionBrush" Value="{DynamicResource Pulse.Accent}"/>
+    <Setter Property="Padding" Value="7,5"/><Setter Property="FontSize" Value="12"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox">
+      <Border x:Name="Frame" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource Pulse.ControlRadius}" Padding="{TemplateBinding Padding}">
+        <ScrollViewer x:Name="PART_ContentHost"/>
+      </Border>
+      <ControlTemplate.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Frame" Property="BorderBrush" Value="{DynamicResource Pulse.Accent}"/></Trigger></ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Pulse.ThemeOption" TargetType="RadioButton">
+    <Setter Property="Foreground" Value="{DynamicResource Pulse.Secondary}"/><Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton">
+      <Border x:Name="Frame" Background="Transparent" BorderBrush="{DynamicResource Pulse.Border}" BorderThickness="1" CornerRadius="7" Padding="4,5">
+        <ContentPresenter/>
+      </Border>
+      <ControlTemplate.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Frame" Property="Background" Value="{DynamicResource Pulse.Hover}"/></Trigger>
+        <Trigger Property="IsChecked" Value="True"><Setter TargetName="Frame" Property="BorderBrush" Value="{DynamicResource Pulse.Accent}"/><Setter TargetName="Frame" Property="Background" Value="{DynamicResource Pulse.Control}"/><Setter Property="Foreground" Value="{DynamicResource Pulse.Text}"/></Trigger>
+        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Frame" Property="BorderThickness" Value="2"/></Trigger>
+      </ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Pulse.Meter" TargetType="ProgressBar">
+    <Setter Property="Background" Value="{DynamicResource Pulse.Track}"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ProgressBar">
+      <Grid x:Name="PART_Track" ClipToBounds="True">
+        <Border Background="{TemplateBinding Background}" CornerRadius="2"/>
+        <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="2" HorizontalAlignment="Left"/>
+      </Grid>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Pulse.CheckBox" TargetType="CheckBox">
+    <Setter Property="Foreground" Value="{DynamicResource Pulse.Secondary}"/><Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox">
+      <StackPanel Orientation="Horizontal">
+        <Border x:Name="Frame" Width="15" Height="15" Background="{DynamicResource Pulse.Control}" BorderBrush="{DynamicResource Pulse.Border}" BorderThickness="1" CornerRadius="3">
+          <TextBlock x:Name="Mark" Text="✓" FontSize="11" Foreground="{DynamicResource Pulse.Accent}" HorizontalAlignment="Center" Visibility="Collapsed"/>
+        </Border>
+        <ContentPresenter Margin="6,0,0,0" VerticalAlignment="Center"/>
+      </StackPanel>
+      <ControlTemplate.Triggers>
+        <Trigger Property="IsChecked" Value="True"><Setter TargetName="Mark" Property="Visibility" Value="Visible"/></Trigger>
+        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Frame" Property="BorderBrush" Value="{DynamicResource Pulse.Accent}"/></Trigger>
+      </ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ScrollBar">
+    <Setter Property="Width" Value="10"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar">
+      <Track x:Name="PART_Track" Orientation="Vertical" IsDirectionReversed="True" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" ViewportSize="{TemplateBinding ViewportSize}" Value="{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+        <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageUpCommand" Focusable="False"><RepeatButton.Template><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></RepeatButton.Template></RepeatButton></Track.DecreaseRepeatButton>
+        <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb">
+          <Border x:Name="Thumb" Background="{DynamicResource Pulse.Muted}" CornerRadius="3" Margin="2,0" Opacity="0.5"/>
+          <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Thumb" Property="Background" Value="{DynamicResource Pulse.Accent}"/><Setter TargetName="Thumb" Property="Opacity" Value="1"/></Trigger></ControlTemplate.Triggers>
+        </ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+        <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Focusable="False"><RepeatButton.Template><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></RepeatButton.Template></RepeatButton></Track.IncreaseRepeatButton>
+      </Track>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Pulse.Slider" TargetType="Slider">
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Slider">
+      <Grid Height="20">
+        <Border Height="3" Background="{DynamicResource Pulse.Track}" CornerRadius="2" Margin="5,0"/>
+        <Track x:Name="PART_Track" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" Value="{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Orientation="{TemplateBinding Orientation}" IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+          <Track.DecreaseRepeatButton><RepeatButton Command="Slider.DecreaseLarge" Focusable="False"><RepeatButton.Template><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></RepeatButton.Template></RepeatButton></Track.DecreaseRepeatButton>
+          <Track.Thumb><Thumb Width="13" Height="13"><Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="{DynamicResource Pulse.Accent}" CornerRadius="6"/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+          <Track.IncreaseRepeatButton><RepeatButton Command="Slider.IncreaseLarge" Focusable="False"><RepeatButton.Template><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></RepeatButton.Template></RepeatButton></Track.IncreaseRepeatButton>
+        </Track>
+      </Grid>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+</ResourceDictionary>

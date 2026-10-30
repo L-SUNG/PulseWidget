@@ -1,0 +1,14 @@
+# Normalize source text in Git; preserve Windows script line endings on checkout.
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.sln text eol=crlf
+
+# Source assets are binary, not generated build output.
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary

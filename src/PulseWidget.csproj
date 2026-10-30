@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>PulseWidget</AssemblyName>
+    <RootNamespace>PulseWidget</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\PulseWidget.ico</ApplicationIcon>
+    <Product>Pulse Widget</Product>
+    <Description>Codex, Claude and PC resource taskbar monitor</Description>
+  </PropertyGroup>
+</Project>

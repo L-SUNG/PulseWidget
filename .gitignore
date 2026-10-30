@@ -1,0 +1,49 @@
+# .NET build output and generated installers
+**/[Bb]in/
+**/[Oo]bj/
+/dist/
+/artifacts/
+TestResults/
+*.exe
+*.dll
+*.pdb
+*.msi
+*.msix
+*.msixbundle
+*.zip
+
+# Local IDE / operating-system files
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local credentials, signing material and environment files
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pfx
+*.p12
+*.key
+*.pem
+*.snk
+.claude/settings.local.json
+
+# Exported user state, diagnostics and temporary files
+/settings.json
+/auth.json
+/usage.json
+/diagnostics.json
+/plan-usage-history.json
+*.log
+*.dmp
+*.tmp
+*.bak
+*.pulse-backup-*
+*.pulse-uninstall-backup-*
