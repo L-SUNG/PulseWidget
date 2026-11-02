@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$FrameworkDependent,
     [string]$OutputDirectory,
     [ValidatePattern('^\d+\.\d+\.\d+(\.\d+)?$')][string]$Version = '1.0.0'
@@ -22,6 +22,6 @@ if (-not $FrameworkDependent) {
     }
 }
 New-Item -ItemType Directory -Force -Path (Join-Path $output 'scripts') | Out-Null
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Install-Claude.ps1'), (Join-Path $PSScriptRoot 'Uninstall-Claude.ps1') -Destination (Join-Path $output 'scripts') -Force
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Install-Claude.ps1'), (Join-Path $PSScriptRoot 'Uninstall-Claude.ps1'), (Join-Path $PSScriptRoot 'Claude-Integration.ps1') -Destination (Join-Path $output 'scripts') -Force
 Copy-Item -LiteralPath (Join-Path $root 'README.md') -Destination $output -Force
 Write-Output "Ready: $output\PulseWidget.exe"

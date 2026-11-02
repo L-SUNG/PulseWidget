@@ -135,9 +135,11 @@ Desktop 기록의 `sd`는 주간 전체 모델 사용 비율, `fh`는 5시간 �
 
 `PulseBridge`는 구독 한도 숫자, 초기화 시각, 수신 시각과 세션의 작업 상태만 `%LOCALAPPDATA%/PulseWidget/claude`에 기록합니다. 세션 식별자는 해시 처리하고 프롬프트·응답·토큰·도구 입력을 기록하지 않습니다. 여러 세션은 개별 상태 파일로 처리합니다. 진행 중인 작업이 이벤트 없이 15분 이상 지속되면 확인 필요로 표시합니다.
 
-기존 사용자 정의 상태줄이 있으면 자동 설치는 변경하지 않고 중단합니다. 그 경우 기존 상태줄 스크립트가 받은 JSON을 `PulseBridge.exe statusline`의 stdin에도 전달하고 출력은 무시하도록 수동으로 연결할 수 있습니다. 프로젝트 설정에서 사용자 설정을 덮어쓰면 해당 프로젝트에도 별도 연동이 필요합니다.
+다른 PC나 Windows 계정에서 가져온 기존 Pulse 연동은 **Claude 연결**을 다시 실행하면 백업 후 현재 계정의 `%LOCALAPPDATA%/PulseWidget/bridge/PulseBridge.exe` 경로로 갱신합니다. 기존 Pulse hook은 중복을 정리해 이벤트별 하나씩 등록하며, 같은 그룹에 있는 다른 hook과 그 설정은 보존합니다. `-DataDirectory`를 지정하면 해당 경로를 사용합니다.
 
-해제: `dist/scripts/Uninstall-Claude.ps1`. Pulse가 추가한 항목만 제거하며 다른 설정은 보존합니다. 자동 실행은 위젯 우클릭에서 별도로 해제합니다.
+Pulse 이외의 사용자 정의 상태줄이 있으면 자동 설치는 변경하지 않고 중단합니다. 자동 갱신 대상은 절대 경로의 `PulseBridge.exe`를 `statusline` 또는 `hook` 인수 하나로 직접 실행하는 설정입니다. 추가 명령이나 래퍼 스크립트가 있는 사용자 정의 명령은 변경하지 않습니다. 그 경우 기존 상태줄 스크립트가 받은 JSON을 `PulseBridge.exe statusline`의 stdin에도 전달하고 출력은 무시하도록 수동으로 연결할 수 있습니다. 프로젝트 설정에서 사용자 설정을 덮어쓰면 해당 프로젝트에도 별도 연동이 필요합니다.
+
+해제: `dist/scripts/Uninstall-Claude.ps1`. 이전 PC·계정 경로를 포함한 위의 Pulse 직접 실행 항목을 제거하며 다른 설정은 보존합니다. 자동 실행은 위젯 우클릭에서 별도로 해제합니다.
 
 ## 빌드 및 검증
 
@@ -149,6 +151,7 @@ dotnet run --project tests/PulseWidget.Tests.csproj -c Release
 dotnet run --project tests-window/PulseWidget.WindowTests.csproj -c Release
 powershell -NoProfile -File scripts/Build.ps1
 powershell -NoProfile -File tests/Test-Bridge.ps1
+powershell -NoProfile -File tests/Test-ClaudeIntegration.ps1
 ```
 
 기존 .NET Desktop Runtime 9를 사용할 경량 배포본은 `scripts/Build.ps1 -FrameworkDependent`로 만듭니다.

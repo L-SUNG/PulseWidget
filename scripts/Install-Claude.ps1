@@ -1,39 +1,41 @@
-param([string]$ClaudeDirectory, [string]$DataDirectory, [string]$BridgeDirectory)
+﻿param([string]$ClaudeDirectory, [string]$DataDirectory, [string]$BridgeDirectory)
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'Claude-Integration.ps1')
 if (-not $ClaudeDirectory) { $ClaudeDirectory = if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $env:USERPROFILE '.claude' } }
 if (-not $DataDirectory) { $DataDirectory = Join-Path $env:LOCALAPPDATA 'PulseWidget' }
 if (-not $BridgeDirectory) { $BridgeDirectory = Join-Path (Split-Path -Parent $PSScriptRoot) 'bridge' }
 $source = Join-Path $BridgeDirectory 'PulseBridge.exe'
 if (-not (Test-Path -LiteralPath $source)) { throw 'Build the release first: scripts/Build.ps1' }
-$destination = Join-Path $DataDirectory 'bridge'
+$destination = Join-Path ([IO.Path]::GetFullPath($DataDirectory)) 'bridge'
 $exe = Join-Path $destination 'PulseBridge.exe'
 $settingsPath = Join-Path $ClaudeDirectory 'settings.json'
 New-Item -ItemType Directory -Force -Path $ClaudeDirectory, $destination | Out-Null
-$config = if (Test-Path -LiteralPath $settingsPath) { Get-Content -Raw -LiteralPath $settingsPath | ConvertFrom-Json } else { [pscustomobject]@{} }
+$config = if (Test-Path -LiteralPath $settingsPath) { Get-Content -Raw -Encoding UTF8 -LiteralPath $settingsPath | ConvertFrom-Json } else { [pscustomobject]@{} }
 # Claude invokes commands through its configured shell; forward-slash paths work
 # in Git Bash as well as PowerShell. Keep quoting around spaces.
 $quoted = '"' + $exe.Replace('\', '/') + '"'
 $statusCommand = $quoted + ' statusline'
 $hookCommand = $quoted + ' hook'
 $statusProperty = $config.PSObject.Properties['statusLine']
-if ($statusProperty -and $config.statusLine -and $config.statusLine.command -ne $statusCommand) {
+if ($statusProperty -and $config.statusLine -and -not (Test-PulseClaudeCommand $config.statusLine 'statusline')) {
     throw 'A custom Claude statusLine already exists. It has been left unchanged. See README for manual integration.'
 }
 $backup = $settingsPath + '.pulse-backup-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff')
 if (Test-Path -LiteralPath $settingsPath) { Copy-Item -LiteralPath $settingsPath -Destination $backup }
 Get-ChildItem -LiteralPath $BridgeDirectory -File | Copy-Item -Destination $destination -Force
-$config | Add-Member -MemberType NoteProperty -Name statusLine -Value ([pscustomobject]@{type='command'; command=$statusCommand}) -Force
+if ($config.statusLine) { $config.statusLine.command = $statusCommand }
+else { $config | Add-Member -MemberType NoteProperty -Name statusLine -Value ([pscustomobject]@{type='command'; command=$statusCommand}) -Force }
 if (-not $config.PSObject.Properties['hooks'] -or -not $config.hooks) { $config | Add-Member -MemberType NoteProperty -Name hooks -Value ([pscustomobject]@{}) -Force }
+# Recreate Pulse's hooks once per supported event. Old accounts/locations and
+# duplicate installs are removed, including Pulse hooks in mixed hook groups.
+Remove-PulseClaudeHooks $config
 $events = @('SessionStart','UserPromptSubmit','PreToolUse','PostToolUse','PostToolUseFailure','PermissionRequest','Notification','Stop','StopFailure','SessionEnd')
 foreach ($eventName in $events) {
     $existing = @()
     if ($config.hooks.PSObject.Properties[$eventName]) { $existing = @($config.hooks.$eventName) }
-    $found = @($existing | ForEach-Object { $_.hooks } | Where-Object { $_.command -eq $hookCommand }).Count -gt 0
-    if (-not $found) {
-        $entry = [pscustomobject]@{ hooks = @([pscustomobject]@{type='command'; command=$hookCommand; timeout=3}) }
-        if ($eventName -eq 'Notification') { $entry | Add-Member -NotePropertyName matcher -NotePropertyValue 'permission_prompt' }
-        $config.hooks | Add-Member -MemberType NoteProperty -Name $eventName -Value @($existing + $entry) -Force
-    }
+    $entry = [pscustomobject]@{ hooks = @([pscustomobject]@{type='command'; command=$hookCommand; timeout=3}) }
+    if ($eventName -eq 'Notification') { $entry | Add-Member -NotePropertyName matcher -NotePropertyValue 'permission_prompt' }
+    $config.hooks | Add-Member -MemberType NoteProperty -Name $eventName -Value @($existing + $entry) -Force
 }
 $json = $config | ConvertTo-Json -Depth 100
 $temp = $settingsPath + '.pulse.tmp'

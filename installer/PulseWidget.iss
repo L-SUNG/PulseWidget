@@ -79,6 +79,7 @@ Source: "{#PayloadDir}\README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#PayloadDir}\bridge\PulseBridge.exe"; DestDir: "{app}\bridge"; Flags: ignoreversion
 Source: "{#PayloadDir}\scripts\Install-Claude.ps1"; DestDir: "{app}\scripts"; Flags: ignoreversion
 Source: "{#PayloadDir}\scripts\Uninstall-Claude.ps1"; DestDir: "{app}\scripts"; Flags: ignoreversion
+Source: "{#PayloadDir}\scripts\Claude-Integration.ps1"; DestDir: "{app}\scripts"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#ProductName}"; Filename: "{app}\PulseWidget.exe"; WorkingDir: "{app}"

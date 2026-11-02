@@ -1,4 +1,4 @@
-param(
+﻿param(
     [ValidatePattern('^\d+\.\d+\.\d+(\.\d+)?$')][string]$Version = '1.0.0',
     [string]$CompilerPath,
     [string]$OutputDirectory,
@@ -26,7 +26,7 @@ $PayloadDirectory = [IO.Path]::GetFullPath($PayloadDirectory)
 if (-not $OutputDirectory) { $OutputDirectory = Join-Path $root 'artifacts\installer' }
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 if (-not $SkipPublish) { & (Join-Path $PSScriptRoot 'Build.ps1') -OutputDirectory $PayloadDirectory -Version $Version }
-foreach ($required in @('PulseWidget.exe','D3DCompiler_47_cor3.dll','PenImc_cor3.dll','PresentationNative_cor3.dll','vcruntime140_cor3.dll','wpfgfx_cor3.dll','bridge\PulseBridge.exe','scripts\Install-Claude.ps1','scripts\Uninstall-Claude.ps1','README.md')) {
+foreach ($required in @('PulseWidget.exe','D3DCompiler_47_cor3.dll','PenImc_cor3.dll','PresentationNative_cor3.dll','vcruntime140_cor3.dll','wpfgfx_cor3.dll','bridge\PulseBridge.exe','scripts\Install-Claude.ps1','scripts\Uninstall-Claude.ps1','scripts\Claude-Integration.ps1','README.md')) {
     if (-not (Test-Path -LiteralPath (Join-Path $PayloadDirectory $required))) { throw "Missing installer payload: $required" }
 }
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null

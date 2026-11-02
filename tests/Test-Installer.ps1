@@ -1,4 +1,4 @@
-param([string]$CompilerPath, [string]$Version = '1.0.0')
+﻿param([string]$CompilerPath, [string]$Version = '1.0.0')
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
@@ -41,9 +41,10 @@ try {
     finally { $mutex.Dispose() }
     Assert (-not (Test-Path -LiteralPath $uninstallKey)) 'Blocked installation makes no product registration'
     Assert ((Install 'first' '/TASKS="startup,desktopicon"') -eq 0) 'Per-user installation succeeds in a path with spaces'
-    foreach ($relative in @('PulseWidget.exe','D3DCompiler_47_cor3.dll','bridge\PulseBridge.exe','scripts\Install-Claude.ps1','scripts\Uninstall-Claude.ps1')) {
+    foreach ($relative in @('PulseWidget.exe','D3DCompiler_47_cor3.dll','bridge\PulseBridge.exe','scripts\Install-Claude.ps1','scripts\Uninstall-Claude.ps1','scripts\Claude-Integration.ps1')) {
         Assert ((Get-FileHash -LiteralPath (Join-Path $payload $relative)).Hash -eq (Get-FileHash -LiteralPath (Join-Path $destination $relative)).Hash) "Installed payload matches: $relative"
     }
+    & (Join-Path $PSScriptRoot 'Test-ClaudeIntegration.ps1') -ScriptsDirectory (Join-Path $destination 'scripts')
     Assert (Test-Path -LiteralPath $uninstallKey) 'Windows Installed Apps registration exists'
     $expectedRun = '"' + (Join-Path $destination 'PulseWidget.exe') + '"'
     Assert ((Get-Item -LiteralPath $runKey).GetValue($testName) -eq $expectedRun) 'Startup uses the quoted installed executable path'
